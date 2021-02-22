@@ -7,4 +7,5 @@
            :menu-orientation :menu-fill-color 
            :menu-hover-color :menu-callback
 
-           :make-menu :draw-menu :initialize-menu))
+           :make-menu :draw-menu
+           :initialize-menu :uninitialize-menu))
