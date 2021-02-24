@@ -9,32 +9,46 @@
             :accessor menu-options)
    (position :initarg :position
              :accessor menu-position)
-   (heading-font :initarg :heading-font
-                 :reader menu-heading-font)
-   (option-font :initarg :option-font
-                :reader menu-option-font)
    (orientation :initarg :orientation
                 :accessor menu-orientation)
    (type :initarg :type
          :reader menu-type)
-   (fill-color :initarg :fill-color
-               :accessor menu-fill-color)
-   (hover-color :initarg :hover-color
-                :accessor menu-hover-color)
    (callback :initarg :callback
              :accessor menu-callback)
-   (panel :initarg :panel
-          :accessor menu-panel)
-   (panel-color :initarg :panel-color
-                :accessor menu-panel-color)
-   (stroke-color :initarg :stroke-color
-                 :accessor menu-stroke-color)
-   (stroke-thickness :initarg :stroke-thickness
-                 :accessor menu-stroke-thickness)
-   (panel-position :initarg :panel-position
-                   :accessor menu-panel-position)
    (selected :initform 0
-             :accessor menu-selected)))
+             :accessor menu-selected)
+   (widgets :initarg :widgets
+            :reader menu-widgets)))
+
+(defun make-menu2 (heading options callback &key (position (vec2 0 0)) (heading-font :default) (option-font :default) (heading-size 24)
+                                             (option-size 18) (type :keyboard) (orientation :vertical) (fill-color gamekit.colors:+white+)
+                                             (btn-color gamekit.colors:+white+) (hover-color gamekit.colors:+black+)
+                                             (pressed-color gamekit.colors:+black+) panel)
+  (let ((w (list (gamekit.ui:make-label heading position :font heading-font :size heading-size :color fill-color)
+                 (if (eq type :mouse)
+                     (loop for (k . v) in options
+                           for l = (make-label k position :font option-font :size option-size :color fill-color)
+                           collect (make-button position :label l :color fill-color
+                                                         :fill-color btn-color :hover-color hover-color
+                                                         :pressed-color pressed-color
+                                                         :rounding 7
+                                                         :on-click (lambda () (funcall callback v))))
+                     (loop for (k . v) in options
+                           collect (make-label k position :font option-font :size option-size :color fill-color))))))
+    (set-widget-positions w)
+    (when panel (setf (children panel) w))
+    (make-instance 'menu :widgets (if panel panel w))))
+
+(defun set-widget-positions (widgets)
+  "set the widget's positions here"
+  )
+
+
+(defmethod draw-menu2 ((this menu))
+  (with-slots (position widgets) this
+    (dolist (w widgets)
+      (draw-widget w :offset position))))
+  
 
 (defun make-menu (heading options callback &key (position (gamekit:vec2 0 0)) (orientation :veritcal) (type :keyboard) (fill-color (gamekit:vec4 1 1 1 1)) (hover-color (gamekit:vec4 0 0 0 .5)) panel (panel-color (gamekit:vec4 0 0 0 1)) (stroke-color (gamekit:vec4 0 0 0 0)) (stroke-thickness 1) panel-position heading-font option-font)
   "creates and returns a menu object with HEADING and OPTIONS. calls CALLBACK when an option is selected.
@@ -61,6 +75,7 @@ OPTION-FONT is the font to be used to draw OPTIONS. defaults to gamekit::*font*"
                        :stroke-color stroke-color :stroke-thickness stroke-thickness
                        :heading-font (or heading-font (cl-bodge.canvas:make-default-font))
                        :option-font (or option-font (cl-bodge.canvas:make-default-font))))
+  
 
 (defmethod draw-menu ((this menu))
   "draws THIS menu"

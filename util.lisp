@@ -2,21 +2,6 @@
 
 (in-package :gamekit.simple-menus)
 
-(declaim (inline text-width text-height text-dimensions))
-
-(defun text-width (text &optional (font gamekit::*font*))
-  (multiple-value-bind (_ text-width) (gamekit:calc-text-bounds text font)
-    (declare (ignore _))
-    text-width))
-
-(defun text-height (text &optional (font gamekit::*font*))
-  (multiple-value-bind (_ __ text-height) (gamekit:calc-text-bounds text font)
-    (declare (ignore _ __))
-    text-height))
-
-(defun text-dimensions (text &optional (font gamekit::*font*))
-  (list (text-width text font) (text-height text font)))
-
 (defun text-center (text position &optional (font gamekit::*font*))
   (let ((dim (text-dimensions text font)))
     (gamekit:vec2 (- (gamekit:x position) (/ (car dim) 2))

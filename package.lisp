@@ -1,8 +1,9 @@
 ;;;; package.lisp
 
 (defpackage #:trivial-gamekit-simple-menus
-  (:use #:cl)
+  (:use #:cl #:gamekit.ui)
   (:nicknames :gamekit.simple-menus)
+  (:import-from :gamekit :vec2 :x :y)
   (:export :menu-heading :menu-options :menu-position
            :menu-orientation :menu-fill-color 
            :menu-hover-color :menu-callback
